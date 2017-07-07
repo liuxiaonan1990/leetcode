@@ -1,0 +1,146 @@
+class Solution(object):
+    def func(self, start_pos, end_pos, s, left, right):
+        print start_pos, end_pos, self.words, left, right
+
+        if len(self.words) == 0:
+            if start_pos not in self.ret:
+                self.ret.append(start_pos)
+            return True
+
+        left_str = ""
+        right_str = ""
+
+        if start_pos - self.str_len >= left:
+            left_str = s[(start_pos - self.str_len): start_pos]
+
+        if end_pos + self.str_len <= right:
+            right_str = s[end_pos: end_pos + self.str_len]
+
+
+        left_flag = left_str in self.words
+        right_flag = right_str in self.words
+
+        if left_flag == False and  right_flag == False:
+            return
+        elif left_flag == True and right_flag == False:
+            self.words.remove(left_str)
+            self.func(start_pos - self.str_len, end_pos, s, left, end_pos)
+            self.words.append(left_str)
+
+        elif left_flag == False and right_flag == True:
+            self.words.remove(right_str)
+            self.func(start_pos, end_pos + self.str_len, s, start_pos, right)
+            self.words.append(right_str)
+
+        else:
+
+            self.words.remove(left_str)
+            if right_str in self.words:
+                self.words.remove(right_str)
+                self.func(start_pos - self.str_len, end_pos + self.str_len, s, left, right)
+                self.words.append(right_str)
+            else:
+                self.func(start_pos - self.str_len, end_pos, s, left, end_pos)
+            self.words.append(left_str)
+
+            self.words.remove(right_str)
+            if left_str in self.words:
+                #same to above
+                pass
+            else:
+                self.func(start_pos, end_pos + self.str_len, s, start_pos, right)
+            self.words.append(right_str)
+
+
+
+
+
+        '''
+        # left
+        if start_pos - self.str_len >= left:
+            left_str = s[(start_pos - self.str_len): start_pos]
+            if left_str in self.words:
+                self.words.remove(left_str)
+                self.func(start_pos - self.str_len, end_pos, s)
+                self.words.append(left_str)
+            else:
+                left = start_pos
+
+        else:
+            pass
+
+        # right
+        if end_pos + self.str_len <= right:
+            right_str = s[end_pos: end_pos + self.str_len]
+            if right_str in self.words:
+                self.words.remove(right_str)
+                self.func(start_pos, end_pos + self.str_len, s)
+                self.words.append(right_str)
+            else:
+                right = end_pos
+
+        else:
+            pass
+            
+        '''
+
+    def findSubstring(self, s, words):
+        """
+        :type s: str
+        :type words: List[str]
+        :rtype: List[int]
+        """
+
+        self.ret = []
+
+        self.str_len = len(words[0])
+
+        if len(s) < self.str_len * len(words):
+            return self.ret
+
+        self.words = words
+
+        words_list = []
+        for i in range(len(words)):
+            if words[i] not in words_list:
+                words_list.append(words[i])
+
+        first = ""
+        if len(words_list) == 1:
+            for i in range(len(words)):
+                first += words[i]
+                self.words.remove(words[i])
+
+
+
+
+
+
+
+
+
+        first = words[0]
+
+        self.words = words[1:]
+
+        pos_list = []
+
+        for i in range(len(s) - self.str_len + 1):
+            flag = True
+            for j in range(len(first)):
+                if s[i + j] != first[j]:
+                    flag = False
+                    break
+
+            if flag == True:
+                pos_list.append(i)
+
+        self.words = words[1:]
+        for i in range(len(pos_list)):
+            a = pos_list[i]
+            b = pos_list[i] + self.str_len
+            self.func(a, b,  s, 0, len(s))
+
+        return self.ret
+
+
