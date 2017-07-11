@@ -1,6 +1,6 @@
 class Solution(object):
     def func(self, start_pos, end_pos, s, left, right):
-        print start_pos, end_pos, self.words, left, right
+  #      print start_pos, end_pos, self.words, left, right
 
         if len(self.words) == 0:
             if start_pos not in self.ret:
@@ -35,22 +35,20 @@ class Solution(object):
         else:
 
             self.words.remove(left_str)
+            self.func(start_pos - self.str_len, end_pos, s, left, end_pos)
+            self.words.append(left_str)
+
+            self.words.remove(right_str)
+            self.func(start_pos, end_pos + self.str_len, s, start_pos, right)
+            self.words.append(right_str)
+
+            self.words.remove(left_str)
             if right_str in self.words:
                 self.words.remove(right_str)
                 self.func(start_pos - self.str_len, end_pos + self.str_len, s, left, right)
                 self.words.append(right_str)
-            else:
-                self.func(start_pos - self.str_len, end_pos, s, left, end_pos)
+
             self.words.append(left_str)
-
-            self.words.remove(right_str)
-            if left_str in self.words:
-                #same to above
-                pass
-            else:
-                self.func(start_pos, end_pos + self.str_len, s, start_pos, right)
-            self.words.append(right_str)
-
 
 
 
@@ -107,10 +105,69 @@ class Solution(object):
 
         first = ""
         if len(words_list) == 1:
-            for i in range(len(words)):
-                first += words[i]
-                self.words.remove(words[i])
 
+            for i in range(len(words)):
+                first += words_list[0]
+                self.words.remove(words_list[0])
+
+            self.str_len = len(first)
+
+            for i in range(len(s) - self.str_len + 1):
+                flag = True
+                for j in range(len(first)):
+                    if s[i + j] != first[j]:
+                        flag = False
+                        break
+                if flag == True:
+                    self.ret.append(i)
+
+            return self.ret
+
+        first = ""
+        if len(words_list) == 2:
+
+            self.words.remove(words_list[0])
+            self.words.remove(words_list[1])
+
+            first = words_list[0] + words_list[1]
+            pos_list = []
+
+            for i in range(len(s) - 2 * self.str_len + 1):
+                flag = True
+                for j in range(len(first)):
+                    if s[i + j] != first[j]:
+                        flag = False
+                        break
+
+                if flag == True:
+                    pos_list.append(i)
+
+            for i in range(len(pos_list)):
+                a = pos_list[i]
+                b = pos_list[i] + self.str_len * 2
+                self.func(a, b,  s, 0, len(s))
+
+
+
+            first = words_list[1] + words_list[0]
+            pos_list = []
+
+            for i in range(len(s) - 2 * self.str_len + 1):
+                flag = True
+                for j in range(len(first)):
+                    if s[i + j] != first[j]:
+                        flag = False
+                        break
+
+                if flag == True:
+                    pos_list.append(i)
+
+            for i in range(len(pos_list)):
+                a = pos_list[i]
+                b = pos_list[i] + self.str_len * 2
+                self.func(a, b,  s, 0, len(s))
+
+            return self.ret
 
 
 
@@ -120,8 +177,6 @@ class Solution(object):
 
 
         first = words[0]
-
-        self.words = words[1:]
 
         pos_list = []
 
